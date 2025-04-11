@@ -21,8 +21,13 @@ jobs:
      run: dotnet build ./CLI/src/Stellarpath.CLI/Stellarpath.CLI.csproj --configuration Release --no-restore
    - name: Publish
      run: dotnet publish ./CLI/src/Stellarpath.CLI/Stellarpath.CLI.csproj --configuration Release --output ./publish
-   - name: Upload artifact
-     uses: actions/upload-artifact@v4
+   - name: Zip output
+     run: zip -r release-artifact.zip ./publish
+   - name: Create GitHub Release
+     uses: softprops/action-gh-release@v2
      with:
-       name: stellar-path-artifact
-       path: ./publish
+       tag_name: ${{ github.ref_name }}
+       files: release-artifact.zip
+     env:
+       GITHUB_TOKEN: ${{ secrets.TOKEN }}
+   
